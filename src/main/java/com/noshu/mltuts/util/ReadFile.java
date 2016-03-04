@@ -1,7 +1,7 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * simple utility class for reading character separated data
+ * return feature Matrix
+ * return responce vector
  */
 package com.noshu.mltuts.util;
 
@@ -18,13 +18,14 @@ import org.nd4j.linalg.factory.Nd4j;
  * @author naushad
  */
 public class ReadFile {
-
     private final String path;
     private final String delimeter;
     private final LinkedList<String[]> rawData;
+    //the responce column number
     int target;
+    //check if the file contains header
     boolean headers;
-
+    //reads file form path
     public ReadFile(String path, String delimeter, int target, boolean headers) {
         this.rawData = new LinkedList();
         this.path = path;
@@ -33,7 +34,7 @@ public class ReadFile {
         this.headers = headers;
         load();
     }
-
+    //load the data from path
     private void load() {
         LineIterator it = null;
         try {
@@ -50,16 +51,17 @@ public class ReadFile {
             }
         }
     }
-
+    //returns a feature matrix or vector
     public INDArray getFeatures() {
         int c = 0;
         if (headers) {
             c = 1;
         }
+        //adjusting the cursor if the file contains header
         int cut = c;
         double[][] features = new double[rawData.size() - cut][rawData.getFirst().length - 1];
         while (c < rawData.size()) {
-            //counter for features
+            //counter for features becuse feature vector column number is less then raw twodimensional list data
             int fc = 0;
             for (int x = 0; x < rawData.getFirst().length; x++) {
                 if (x != target) {
@@ -73,12 +75,13 @@ public class ReadFile {
         return Nd4j.create(features);
 
     }
-
+    //return responce vector
     public INDArray getTarget() {
         int c = 0;
         if (headers) {
             c = 1;
         }
+        //adjusting the cursor if the file contains header
         int cut = c;
         double[] targetvec = new double[rawData.size() - cut];
         while (c < rawData.size()) {
